@@ -15,10 +15,5 @@ namespace MovieExplorer
         public double Rating { get; set; }
         public string CoverUrl { get; set; }
         public List<string> Cast { get; set; } = new List<string>();
-}
-
-        //To display
-        public string DisplayInfo => $"{Title} ({Year})";
-        public string RatingDisplay => $"⭐ {Rating}/10";
     }
 }
