@@ -1,0 +1,34 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="MovieExplorer.MainPage"
+             Title="Movie Explorer">
+
+    <VerticalStackLayout Padding="20">
+
+        <Label Text="Movie Explorer"
+               FontSize="30"
+               HorizontalOptions="Center"
+               Margin="0,50,0,30"/>
+
+        
+        <!--!!!!!!!!!!!!!!!RMB TO ADD THESE METHODS IN MAIN PAGE
+        <Button Text="Browse Movies"
+                Clicked="OnBrowseMoviesClicked"
+                HeightRequest="50"
+                Margin="0,10"/>
+
+        <Button Text="My Favorites"
+                Clicked="OnFavoritesClicked"
+                HeightRequest="50"
+                Margin="0,10"/>
+
+        <Button Text="Settings"
+                Clicked="OnSettingsClicked"
+                HeightRequest="50"
+                Margin="0,10"/>
+        -->
+
+    </VerticalStackLayout>
+
+</ContentPage>
