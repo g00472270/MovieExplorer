@@ -2,98 +2,109 @@
 {
     public partial class MovieListPage : ContentPage
     {
-        private MovieService _movieService;
-        private List<Movie> _allMovies;
-        private List<Movie> _filteredMovies;
+        private readonly MovieViewModel _viewModel;
 
         public MovieListPage()
         {
             InitializeComponent();
-            _movieService = new MovieService();
+
+            //Create new ViewModel with URL to download movies
+            _viewModel = new MovieViewModel("https://raw.githubusercontent.com/DonH-TTS/jsonfiles/refs/heads/main/moviesemoji.json");
+            BindingContext = _viewModel;
+
             LoadMovies();
+        }
+
+        protected override void OnAppearing()
+        {
+            base.OnAppearing();
+            if (_viewModel.IsLoaded)
+            {
+                _viewModel.UpdateFilteredMovies(); //Refresh display
+            }
         }
 
         private async void LoadMovies()
         {
-            //Show loading message
             MovieCountLabel.Text = "Loading movies...";
 
-            //Get movies from service
-            _allMovies = await _movieService.GetMoviesAsync();
-            _filteredMovies = _allMovies;
+            //Download movies from URL
+            await _viewModel.DownloadMovies();
 
-            //Show movies in the list
-            MovieCollectionView.ItemsSource = _filteredMovies;
-            MovieCountLabel.Text = $"Found {_filteredMovies.Count} movies";
-
-            //Filter dropdown
-            GenreFilter();
+            //Update MovieCountLabel
+            MovieCountLabel.Text = $"Found {_viewModel.FilteredMovies.Count} movies";
+            SetupGenreFilter();
         }
 
-        private void GenreFilter()
+        private void SetupGenreFilter()
         {
             //Genre list
             var genres = new List<string>
             {
                 "All Genres",
                 "Action",
-                "Comedy",
-                "Drama",
-                "Horror",
-                "Sci-Fi",
-                "Romance",
-                "Thriller",
                 "Adventure",
-                "Crime",
                 "Animation",
-                "Biography"
+                "Biography",
+                "Comedy",
+                "Crime",
+                "Drama",
+                "Family",
+                "Fantasy",
+                "History",
+                "Horror",
+                "Music",
+                "Mystery",
+                "Romance",
+                "Sci-Fi",
+                "Thriller",
+                "War",
+                "Western"
             };
 
+            //Set default genre to first item
             GenrePicker.ItemsSource = genres;
             GenrePicker.SelectedIndex = 0;
         }
 
         private void OnSearchTextChanged(object sender, TextChangedEventArgs e)
         {
-            FilterMovies();
+            //Update search text in ViewModel, automatically filter movies
+            _viewModel.SearchText = e.NewTextValue ?? "";
+            MovieCountLabel.Text = $"Found {_viewModel.FilteredMovies.Count} movies";
         }
 
         private void OnGenreChanged(object sender, EventArgs e)
         {
-            FilterMovies();
+            if (GenrePicker.SelectedItem is string genre)
+            {
+                //Update selected genre in ViewModel, which automatically filters movies
+                _viewModel.SelectedGenre = genre;
+                MovieCountLabel.Text = $"Found {_viewModel.FilteredMovies.Count} movies";
+            }
         }
 
-        private void FilterMovies()
+        private void OnSortClicked(object sender, EventArgs e)
         {
-            //Get the search text and selected genre
-            string searchText = SearchEntry.Text;
-            string selectedGenre = GenrePicker.SelectedItem as string;
-
-            //Start with all movies
-            _filteredMovies = _allMovies;
-
-            //Apply search filter
-            if (!string.IsNullOrWhiteSpace(searchText))
+            if (sender is Button button && button.CommandParameter is string sortBy)
             {
-                _filteredMovies = _movieService.SearchMovies(searchText, _filteredMovies);
+                //Sort movies by Title, Year, or Rating
+                _viewModel.SortMovies(sortBy);
+                MovieCountLabel.Text = $"Found {_viewModel.FilteredMovies.Count} movies";
             }
+        }
 
-            //Apply genre filter
-            if (!string.IsNullOrWhiteSpace(selectedGenre) && selectedGenre != "All Genres")
-            {
-                _filteredMovies = _movieService.FilterByGenre(selectedGenre, _filteredMovies);
-            }
-
-            //Update the display
-            MovieCollectionView.ItemsSource = _filteredMovies;
-            MovieCountLabel.Text = $"Found {_filteredMovies.Count} movies";
+        private async void OnAddMovieClicked(object sender, EventArgs e)
+        {
+            //Navigate to Add Movie page and pass ViewModel
+            await Navigation.PushAsync(new AddMoviePage(_viewModel));
         }
 
         private async void OnMovieSelected(object sender, SelectionChangedEventArgs e)
         {
             if (e.CurrentSelection.FirstOrDefault() is Movie selectedMovie)
             {
-                //Show movie details in a popup
+                //Show movie details in a popup and ask to add to favourites
                 bool addToFavorites = await DisplayAlert(
                     selectedMovie.Title,
                     $"Year: {selectedMovie.Year}\n" +
@@ -106,14 +117,16 @@
 
                 if (addToFavorites)
                 {
-                    //Load current favourites
-                    var favourites = _movieService.LoadFavourites();
+                    //Load current favourites list
+                    var movieService = new MovieService();
+                    var favourites = movieService.LoadFavourites();
 
-                    //Check if already in favourites
+                    //Check if movie is already in favourites
                     if (!favourites.Any(f => f.Title == selectedMovie.Title))
                     {
+                        //Add movie to favourites and save
                         favourites.Add(selectedMovie);
-                        _movieService.SaveFavourites(favourites);
+                        movieService.SaveFavourites(favourites);
 
                         await DisplayAlert("Success!",
                             $"{selectedMovie.Title} added to favourites!",
@@ -121,13 +134,14 @@
                     }
                     else
                     {
+                        //Movie already in favourites
                         await DisplayAlert("Already Added",
                             "This movie is already in your favourites.",
                             "OK");
                     }
                 }
 
-                //Clear the selection so can tap the same movie again
+                //Clear selection so user can tap same movie again
                 MovieCollectionView.SelectedItem = null;
             }
         }

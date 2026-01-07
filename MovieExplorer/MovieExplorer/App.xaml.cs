@@ -2,6 +2,8 @@
 {
     public partial class App : Application
     {
+        public static HttpClient HttpClient { get; private set; } = new HttpClient();
+
         public App()
         {
             InitializeComponent();

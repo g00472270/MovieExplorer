@@ -68,6 +68,9 @@
 	  <Compile Update="FavouritesPage.xaml.cs">
 	    <DependentUpon>FavouritesPage.xaml</DependentUpon>
 	  </Compile>
+	  <Compile Update="AddMoviePage.xaml.cs">
+	    <DependentUpon>AddMoviePage.xaml</DependentUpon>
+	  </Compile>
 	  <Compile Update="MovieListPage.xaml.cs">
 	    <DependentUpon>MovieListPage.xaml</DependentUpon>
 	  </Compile>
@@ -77,6 +80,9 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <MauiXaml Update="AddMoviePage.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
 	  <MauiXaml Update="MovieListPage.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>

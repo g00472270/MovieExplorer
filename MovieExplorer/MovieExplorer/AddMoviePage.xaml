@@ -1,0 +1,104 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="MovieExplorer.AddMoviePage"
+             Title="Add New Movie">
+
+    <ScrollView>
+        <VerticalStackLayout Padding="20" Spacing="15">
+
+            <Label Text="Add New Movie"
+                   FontSize="24"
+                   FontAttributes="Bold"
+                   HorizontalOptions="Center"
+                   Margin="0,0,0,20"/>
+
+            <!--Movie title input-->
+            <Label Text="Movie Title *" FontAttributes="Bold"/>
+            <Entry x:Name="TitleEntry"
+                   Placeholder="Enter movie title"/>
+
+            <!--Year input-->
+            <Label Text="Year *" FontAttributes="Bold"/>
+            <Entry x:Name="YearEntry"
+                   Placeholder="Enter year (e.g. 2024)"
+                   Keyboard="Numeric"/>
+
+            <!--Director input-->
+            <Label Text="Director" FontAttributes="Bold"/>
+            <Entry x:Name="DirectorEntry"
+                   Placeholder="Enter director name"/>
+
+            <!--Rating input-->
+            <Label Text="Rating (0-10)" FontAttributes="Bold"/>
+            <Entry x:Name="RatingEntry"
+                   Placeholder="Enter rating (e.g. 8.5)"
+                   Keyboard="Numeric"/>
+
+            <!--Emoji input-->
+            <Label Text="Emoji" FontAttributes="Bold"/>
+            <Entry x:Name="EmojiEntry"
+                   Placeholder="Enter emoji"
+                   MaxLength="2"/>
+
+            <!--Genres section-->
+            <Label Text="Genres" FontAttributes="Bold" Margin="0,10,0,0"/>
+
+            <!--Add genre input and button-->
+            <HorizontalStackLayout Spacing="10">
+                <Entry x:Name="NewGenreEntry"
+                       Placeholder="Add genre..."
+                       WidthRequest="200"/>
+                <Button Text="Add Genre"
+                        Clicked="AddGenreClicked"
+                        BackgroundColor="#512BD4"
+                        TextColor="White"/>
+            </HorizontalStackLayout>
+
+            <!--Genres list-->
+            <CollectionView x:Name="GenresCollectionView"
+                            ItemsSource="{Binding Genres}"
+                            HeightRequest="150">
+                <CollectionView.ItemTemplate>
+                    <DataTemplate>
+                        <Border Padding="10"
+                                Margin="5"
+                                StrokeThickness="1"
+                                Stroke="LightGray"
+                                BackgroundColor="White">
+                            <Border.StrokeShape>
+                                <RoundRectangle CornerRadius="5"/>
+                            </Border.StrokeShape>
+
+                            <HorizontalStackLayout Spacing="10">
+                                <!--Genre name-->
+                                <Label Text="{Binding .}"
+                                       VerticalOptions="Center"
+                                       HorizontalOptions="Start"
+                                       WidthRequest="150"/>
+                                <!--Remove button-->
+                                <Button Text="❌"
+                                        Clicked="RemoveGenreClicked"
+                                        BackgroundColor="Transparent"
+                                        WidthRequest="30"
+                                        HeightRequest="30"/>
+                            </HorizontalStackLayout>
+                        </Border>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+
+            <!--Add movie button-->
+            <Button Text="Add Movie"
+                    Clicked="AddMovieClicked"
+                    BackgroundColor="Green"
+                    TextColor="White"
+                    Margin="0,20,0,0"
+                    HeightRequest="50"
+                    FontSize="18"
+                    FontAttributes="Bold"/>
+
+        </VerticalStackLayout>
+    </ScrollView>
+
+</ContentPage>
