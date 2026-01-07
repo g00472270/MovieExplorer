@@ -2,37 +2,37 @@
 {
     public partial class MovieListPage : ContentPage
     {
-        private readonly MovieViewModel _viewModel;
+        private MovieService _movieService;
+        //Initialise lists
+        private List<Movie> _allMovies = new List<Movie>();
+        private List<Movie> _filteredMovies = new List<Movie>();
 
         public MovieListPage()
         {
             InitializeComponent();
-
-            //Create new ViewModel with URL to download movies
-            _viewModel = new MovieViewModel("https://raw.githubusercontent.com/DonH-TTS/jsonfiles/refs/heads/main/moviesemoji.json");
-            BindingContext = _viewModel;
-
+            _movieService = new MovieService();
             LoadMovies();
         }
 
         protected override void OnAppearing()
         {
             base.OnAppearing();
-            if (_viewModel.IsLoaded)
-            {
-                _viewModel.UpdateFilteredMovies(); //Refresh display
-            }
+            //Reload movies when page appears
+            LoadMovies();
         }
 
         private async void LoadMovies()
         {
             MovieCountLabel.Text = "Loading movies...";
 
-            //Download movies from URL
-            await _viewModel.DownloadMovies();
+            //Get movies from service
+            _allMovies = await _movieService.GetMoviesAsync();
+            _filteredMovies = _allMovies;
 
-            //Update MovieCountLabel
-            MovieCountLabel.Text = $"Found {_viewModel.FilteredMovies.Count} movies";
+            //Show movies in the list
+            MovieCollectionView.ItemsSource = _filteredMovies;
+            MovieCountLabel.Text = $"Found {_filteredMovies.Count} movies";
+
             SetupGenreFilter();
         }
 
@@ -62,49 +62,51 @@
                 "Western"
             };
 
-            //Set default genre to first item
             GenrePicker.ItemsSource = genres;
             GenrePicker.SelectedIndex = 0;
         }
 
         private void OnSearchTextChanged(object sender, TextChangedEventArgs e)
         {
-            //Update search text in ViewModel, automatically filter movies
-            _viewModel.SearchText = e.NewTextValue ?? "";
-            MovieCountLabel.Text = $"Found {_viewModel.FilteredMovies.Count} movies";
+            FilterMovies();
         }
 
         private void OnGenreChanged(object sender, EventArgs e)
         {
-            if (GenrePicker.SelectedItem is string genre)
-            {
-                //Update selected genre in ViewModel, which automatically filters movies
-                _viewModel.SelectedGenre = genre;
-                MovieCountLabel.Text = $"Found {_viewModel.FilteredMovies.Count} movies";
-            }
+            FilterMovies();
         }
 
-        private void OnSortClicked(object sender, EventArgs e)
+        private void FilterMovies()
         {
-            if (sender is Button button && button.CommandParameter is string sortBy)
-            {
-                //Sort movies by Title, Year, or Rating
-                _viewModel.SortMovies(sortBy);
-                MovieCountLabel.Text = $"Found {_viewModel.FilteredMovies.Count} movies";
-            }
-        }
+            //Get the search text and selected genre
+            string searchText = SearchEntry.Text ?? "";
+            string selectedGenre = GenrePicker.SelectedItem as string ?? "All Genres";
 
-        private async void OnAddMovieClicked(object sender, EventArgs e)
-        {
-            //Navigate to Add Movie page and pass ViewModel
-            await Navigation.PushAsync(new AddMoviePage(_viewModel));
+            //Start with all movies
+            _filteredMovies = _allMovies;
+
+            //Apply search filter
+            if (!string.IsNullOrWhiteSpace(searchText))
+            {
+                _filteredMovies = _movieService.SearchMovies(searchText, _filteredMovies);
+            }
+
+            //Apply genre filter
+            if (!string.IsNullOrWhiteSpace(selectedGenre) && selectedGenre != "All Genres")
+            {
+                _filteredMovies = _movieService.FilterByGenre(selectedGenre, _filteredMovies);
+            }
+
+            //Update the display
+            MovieCollectionView.ItemsSource = _filteredMovies;
+            MovieCountLabel.Text = $"Found {_filteredMovies.Count} movies";
         }
 
         private async void OnMovieSelected(object sender, SelectionChangedEventArgs e)
         {
             if (e.CurrentSelection.FirstOrDefault() is Movie selectedMovie)
             {
-                //Show movie details in a popup and ask to add to favourites
+                //Show movie details in a popup
                 bool addToFavorites = await DisplayAlert(
                     selectedMovie.Title,
                     $"Year: {selectedMovie.Year}\n" +
@@ -117,16 +119,14 @@
 
                 if (addToFavorites)
                 {
-                    //Load current favourites list
-                    var movieService = new MovieService();
-                    var favourites = movieService.LoadFavourites();
+                    //Load current favourites
+                    var favourites = _movieService.LoadFavourites();
 
-                    //Check if movie is already in favourites
+                    //Check if already in favourites
                     if (!favourites.Any(f => f.Title == selectedMovie.Title))
                     {
-                        //Add movie to favourites and save
                         favourites.Add(selectedMovie);
-                        movieService.SaveFavourites(favourites);
+                        _movieService.SaveFavourites(favourites);
 
                         await DisplayAlert("Success!",
                             $"{selectedMovie.Title} added to favourites!",
@@ -134,14 +134,13 @@
                     }
                     else
                     {
-                        //Movie already in favourites
                         await DisplayAlert("Already Added",
                             "This movie is already in your favourites.",
                             "OK");
                     }
                 }
 
-                //Clear selection so user can tap same movie again
+                //Clear the selection so can tap the same movie again
                 MovieCollectionView.SelectedItem = null;
             }
         }

@@ -1,7 +1,6 @@
 ﻿using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
-using System.Text.Json;
 
 namespace MovieExplorer
 {
@@ -11,6 +10,7 @@ namespace MovieExplorer
         private Movie _selectedMovie;
         private string _searchText = "";
         private string _selectedGenre = "All Genres";
+        private MovieService _movieService;
 
         //Observable collection of all movies
         private ObservableCollection<Movie> _movies;
@@ -40,46 +40,14 @@ namespace MovieExplorer
         //Track if movies loaded
         public bool IsLoaded { get; private set; } = false;
 
-        //Download movies from URL
+        //Download movies from URL using MovieService
         public async Task DownloadMovies()
         {
             if (!IsLoaded)
             {
-                string filename = Path.Combine(FileSystem.Current.AppDataDirectory, "movies.json");
-
-                //Check if local file exists
-                if (File.Exists(filename))
-                {
-                    //Load from local cache
-                    using FileStream inputStream = File.OpenRead(filename);
-                    using StreamReader reader = new StreamReader(inputStream);
-                    string contents = await reader.ReadToEndAsync();
-                    Movies = JsonSerializer.Deserialize<ObservableCollection<Movie>>(contents);
-                }
-                else
-                {
-                    try
-                    {
-                        //Download from URL
-                        var response = await App.HttpClient.GetAsync(_url);
-                        if (response != null && response.IsSuccessStatusCode)
-                        {
-                            string contents = await response.Content.ReadAsStringAsync();
-                            Movies = JsonSerializer.Deserialize<ObservableCollection<Movie>>(contents);
-
-                            //Save to local cache
-                            using FileStream outputStream = File.Create(filename);
-                            using StreamWriter writer = new StreamWriter(outputStream);
-                            await writer.WriteAsync(contents);
-                        }
-                    }
-                    catch
-                    {
-                        //If download fails, create empty collection
-                        Movies = new ObservableCollection<Movie>();
-                    }
-                }
-
+                //Use existing MovieService which already works
+                var moviesList = await _movieService.GetMoviesAsync();
+                Movies = new ObservableCollection<Movie>(moviesList);
                 IsLoaded = true;
             }
         }
@@ -104,11 +72,13 @@ namespace MovieExplorer
         //Save movies to local file
         public async Task SaveMovies()
         {
-            string filename = Path.Combine(FileSystem.Current.AppDataDirectory, "movies.json");
-            string jsonContents = JsonSerializer.Serialize(Movies);
-            using FileStream outputStream = File.Create(filename);
-            using StreamWriter writer = new StreamWriter(outputStream);
-            await writer.WriteAsync(jsonContents);
+            //Convert ObservableCollection back to List and save
+            var moviesList = Movies.ToList();
+
+            //Save using JsonSerializer directly
+            string filename = System.IO.Path.Combine(FileSystem.Current.AppDataDirectory, "movies.json");
+            string jsonContents = System.Text.Json.JsonSerializer.Serialize(moviesList);
+            await File.WriteAllTextAsync(filename, jsonContents);
         }
 
         //Search text property with automatic filtering
@@ -136,12 +106,12 @@ namespace MovieExplorer
                 {
                     _selectedGenre = value;
                     OnPropertyChanged();
-                    UpdateFilteredMovies(); //Auto-filter when genre changes
+                    UpdateFilteredMovies(); //Auto filter when genre changes
                 }
             }
         }
 
-        //Update filtered movies based on search text and selected genre
+        //Update filtered movies based on search text and genre
         public void UpdateFilteredMovies()
         {
             if (Movies == null)
@@ -181,10 +151,11 @@ namespace MovieExplorer
             }
         }
 
-        //Initialize ViewModel with URL
+        //Initialise ViewModel with url
         public MovieViewModel(string url)
         {
             _url = url;
+            _movieService = new MovieService(); //Use existing MovieService
             _movies = new ObservableCollection<Movie>();
             _filteredMovies = new ObservableCollection<Movie>();
         }

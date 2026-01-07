@@ -27,6 +27,7 @@
 
         <!-- Movie list-->
         <CollectionView x:Name="MovieCollectionView"
+                        ItemsSource="{Binding FilteredMovies}"
                         SelectionMode="Single"
                         SelectionChanged="OnMovieSelected">
             <CollectionView.ItemTemplate>
