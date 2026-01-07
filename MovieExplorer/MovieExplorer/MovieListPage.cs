@@ -2,37 +2,39 @@
 {
     public partial class MovieListPage : ContentPage
     {
-        private MovieService _movieService;
-        //Initialise lists
-        private List<Movie> _allMovies = new List<Movie>();
-        private List<Movie> _filteredMovies = new List<Movie>();
+        private readonly MovieViewModel _viewModel;
 
         public MovieListPage()
         {
             InitializeComponent();
-            _movieService = new MovieService();
+
+            //Create new ViewModel with URL
+            _viewModel = new MovieViewModel("https://raw.githubusercontent.com/DonH-TTS/jsonfiles/refs/heads/main/moviesemoji.json");
+            //Set BindingContext so XAML can bind to ViewModel properties
+            BindingContext = _viewModel;
+
             LoadMovies();
         }
 
         protected override void OnAppearing()
         {
             base.OnAppearing();
-            //Reload movies when page appears
-            LoadMovies();
+            //Refresh display when page appears
+            if (_viewModel.IsLoaded)
+            {
+                _viewModel.UpdateFilteredMovies();
+            }
         }
 
         private async void LoadMovies()
         {
             MovieCountLabel.Text = "Loading movies...";
 
-            //Get movies from service
-            _allMovies = await _movieService.GetMoviesAsync();
-            _filteredMovies = _allMovies;
+            //Download movies from ViewModel
+            await _viewModel.DownloadMovies();
 
-            //Show movies in the list
-            MovieCollectionView.ItemsSource = _filteredMovies;
-            MovieCountLabel.Text = $"Found {_filteredMovies.Count} movies";
-
+            //Update movie count label
+            MovieCountLabel.Text = $"Found {_viewModel.FilteredMovies.Count} movies";
             SetupGenreFilter();
         }
 
@@ -68,38 +70,35 @@
 
         private void OnSearchTextChanged(object sender, TextChangedEventArgs e)
         {
-            FilterMovies();
+            //Update search text in ViewModel, which automatically filters movies
+            _viewModel.SearchText = e.NewTextValue ?? "";
+            MovieCountLabel.Text = $"Found {_viewModel.FilteredMovies.Count} movies";
         }
 
         private void OnGenreChanged(object sender, EventArgs e)
         {
-            FilterMovies();
+            if (GenrePicker.SelectedItem is string genre)
+            {
+                //Update selected genre in ViewModel, which automatically filters movies
+                _viewModel.SelectedGenre = genre;
+                MovieCountLabel.Text = $"Found {_viewModel.FilteredMovies.Count} movies";
+            }
         }
 
-        private void FilterMovies()
+        private void OnSortClicked(object sender, EventArgs e)
         {
-            //Get the search text and selected genre
-            string searchText = SearchEntry.Text ?? "";
-            string selectedGenre = GenrePicker.SelectedItem as string ?? "All Genres";
-
-            //Start with all movies
-            _filteredMovies = _allMovies;
-
-            //Apply search filter
-            if (!string.IsNullOrWhiteSpace(searchText))
+            if (sender is Button button && button.CommandParameter is string sortBy)
             {
-                _filteredMovies = _movieService.SearchMovies(searchText, _filteredMovies);
+                //Sort movies by Title, Year, or Rating
+                _viewModel.SortMovies(sortBy);
+                MovieCountLabel.Text = $"Found {_viewModel.FilteredMovies.Count} movies";
             }
+        }
 
-            //Apply genre filter
-            if (!string.IsNullOrWhiteSpace(selectedGenre) && selectedGenre != "All Genres")
-            {
-                _filteredMovies = _movieService.FilterByGenre(selectedGenre, _filteredMovies);
-            }
-
-            //Update the display
-            MovieCollectionView.ItemsSource = _filteredMovies;
-            MovieCountLabel.Text = $"Found {_filteredMovies.Count} movies";
+        private async void OnAddMovieClicked(object sender, EventArgs e)
+        {
+            //Navigate to Add Movie page and pass ViewModel
+            await Navigation.PushAsync(new AddMoviePage(_viewModel));
         }
 
         private async void OnMovieSelected(object sender, SelectionChangedEventArgs e)
@@ -120,13 +119,14 @@
                 if (addToFavorites)
                 {
                     //Load current favourites
-                    var favourites = _movieService.LoadFavourites();
+                    var movieService = new MovieService();
+                    var favourites = movieService.LoadFavourites();
 
                     //Check if already in favourites
                     if (!favourites.Any(f => f.Title == selectedMovie.Title))
                     {
                         favourites.Add(selectedMovie);
-                        _movieService.SaveFavourites(favourites);
+                        movieService.SaveFavourites(favourites);
 
                         await DisplayAlert("Success!",
                             $"{selectedMovie.Title} added to favourites!",

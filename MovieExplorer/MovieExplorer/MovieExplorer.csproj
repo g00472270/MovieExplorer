@@ -71,9 +71,6 @@
 	  <Compile Update="AddMoviePage.xaml.cs">
 	    <DependentUpon>AddMoviePage.xaml</DependentUpon>
 	  </Compile>
-	  <Compile Update="MovieListPage.xaml.cs">
-	    <DependentUpon>MovieListPage.xaml</DependentUpon>
-	  </Compile>
 	  <Compile Update="MainPage.xaml.cs">
 	    <DependentUpon>MainPage.xaml</DependentUpon>
 	  </Compile>

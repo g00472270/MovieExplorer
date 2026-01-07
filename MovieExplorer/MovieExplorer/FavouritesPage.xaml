@@ -43,6 +43,7 @@
                                                  Padding="15,0">
                                 <Label Text="{Binding DisplayInfo}" 
                                        FontSize="18"
+                                       TextColor="Black"
                                        FontAttributes="Bold"/>
 
                                 <Label Text="{Binding GenreDisplay}" 
@@ -51,13 +52,16 @@
                             </VerticalStackLayout>
 
                             <!--Remove button-->
-                            <Button Text="❌" 
+                            <Button Text="Delete" 
                                     Grid.Column="2"
-                                    FontSize="16"
-                                    WidthRequest="40"
+                                    FontSize="14"
+                                    WidthRequest="80"
                                     HeightRequest="40"
-                                    BackgroundColor="Transparent"
+                                    BackgroundColor="Red"
+                                    TextColor="White"
+                                    CornerRadius="5"
                                     Clicked="OnRemoveFavouriteClicked"/>
+                           
                         </Grid>
                     </Border>
                 </DataTemplate>

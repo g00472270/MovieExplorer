@@ -4,6 +4,8 @@ using System.Runtime.CompilerServices;
 
 namespace MovieExplorer
 {
+    //MovieViewModel implements MVVM pattern
+    //INotifyPropertyChanged allows UI to update when properties change
     public class MovieViewModel : INotifyPropertyChanged
     {
         private string _url;
@@ -40,12 +42,12 @@ namespace MovieExplorer
         //Track if movies loaded
         public bool IsLoaded { get; private set; } = false;
 
-        //Download movies from URL using MovieService
+        //Download movies using MovieService
         public async Task DownloadMovies()
         {
             if (!IsLoaded)
             {
-                //Use existing MovieService which already works
+                //Use MovieService to get movies (tries download, falls back to hardcoded)
                 var moviesList = await _movieService.GetMoviesAsync();
                 Movies = new ObservableCollection<Movie>(moviesList);
                 IsLoaded = true;
@@ -72,12 +74,14 @@ namespace MovieExplorer
         //Save movies to local file
         public async Task SaveMovies()
         {
-            //Convert ObservableCollection back to List and save
+            //Convert ObservableCollection back to List
             var moviesList = Movies.ToList();
 
-            //Save using JsonSerializer directly
+            //Get path to save file in app's data directory
             string filename = System.IO.Path.Combine(FileSystem.Current.AppDataDirectory, "movies.json");
+            //Serialize list to JSON string
             string jsonContents = System.Text.Json.JsonSerializer.Serialize(moviesList);
+            //Write JSON to file
             await File.WriteAllTextAsync(filename, jsonContents);
         }
 
@@ -106,7 +110,7 @@ namespace MovieExplorer
                 {
                     _selectedGenre = value;
                     OnPropertyChanged();
-                    UpdateFilteredMovies(); //Auto filter when genre changes
+                    UpdateFilteredMovies(); //Auto-filter when genre changes
                 }
             }
         }
@@ -120,6 +124,7 @@ namespace MovieExplorer
                 return;
             }
 
+            //Start with all movies
             var filtered = Movies.AsEnumerable();
 
             //Apply search filter
@@ -151,11 +156,11 @@ namespace MovieExplorer
             }
         }
 
-        //Initialise ViewModel with url
+        //Constructor - initialise ViewModel
         public MovieViewModel(string url)
         {
             _url = url;
-            _movieService = new MovieService(); //Use existing MovieService
+            _movieService = new MovieService(); //Create MovieService instance
             _movies = new ObservableCollection<Movie>();
             _filteredMovies = new ObservableCollection<Movie>();
         }

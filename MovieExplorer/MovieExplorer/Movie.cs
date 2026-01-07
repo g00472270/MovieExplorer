@@ -4,6 +4,7 @@ namespace MovieExplorer
 {
     public class Movie
     {
+        //JsonPropertyName --> tells the deserializer which JSON field maps to the ("...") property
         [JsonPropertyName("title")]
         public string Title { get; set; } = string.Empty;
 
@@ -22,9 +23,10 @@ namespace MovieExplorer
         [JsonPropertyName("emoji")]
         public string Emoji { get; set; } = string.Empty;
 
-        // Display properties
+        //Displays
         public string DisplayInfo => $"{Title} ({Year})";
         public string RatingDisplay => $"⭐ {Rating}/10";
+        //Join all genres with , and return unknown if no genres
         public string GenreDisplay => Genre != null && Genre.Length > 0 ? string.Join(", ", Genre) : "Unknown";
     }
 }
