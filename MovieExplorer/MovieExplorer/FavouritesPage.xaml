@@ -1,0 +1,77 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="MovieExplorer.FavouritesPage"
+             Title="My Favourites">
+
+    <VerticalStackLayout>
+
+        <Label Text="⭐ My Favourite Movies" 
+               FontSize="24" 
+               HorizontalOptions="Center"
+               Margin="0,20"/>
+
+        <!--Favourites list-->
+        <CollectionView x:Name="FavouritesCollectionView">
+            <CollectionView.ItemTemplate>
+                <DataTemplate>
+                    <Border Padding="15" 
+                            Margin="10,5" 
+                            StrokeThickness="1"
+                            Stroke="LightGray"
+                            BackgroundColor="White">
+                        <Border.StrokeShape>
+                            <RoundRectangle CornerRadius="10"/>
+                        </Border.StrokeShape>
+
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+
+                            <!--Emoji-->
+                            <Label Text="{Binding Emoji}" 
+                                   FontSize="30"
+                                   Grid.Column="0"
+                                   VerticalOptions="Center"/>
+
+                            <!--Movie info-->
+                            <VerticalStackLayout Grid.Column="1" 
+                                                 Spacing="5"
+                                                 Padding="15,0">
+                                <Label Text="{Binding DisplayInfo}" 
+                                       FontSize="18"
+                                       FontAttributes="Bold"/>
+
+                                <Label Text="{Binding GenreDisplay}" 
+                                       FontSize="14"
+                                       TextColor="Gray"/>
+                            </VerticalStackLayout>
+
+                            <!--Remove button-->
+                            <Button Text="❌" 
+                                    Grid.Column="2"
+                                    FontSize="16"
+                                    WidthRequest="40"
+                                    HeightRequest="40"
+                                    BackgroundColor="Transparent"
+                                    Clicked="OnRemoveFavouriteClicked"/>
+                        </Grid>
+                    </Border>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
+
+        <!--Empty label message-->
+        <Label x:Name="EmptyLabel"
+               Text="No favourites yet. Browse movies and add some!"
+               FontSize="16"
+               HorizontalOptions="Center"
+               VerticalOptions="Center"
+               IsVisible="False"/>
+
+    </VerticalStackLayout>
+
+</ContentPage>

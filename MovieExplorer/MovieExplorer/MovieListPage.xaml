@@ -1,0 +1,88 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="MovieExplorer.MovieListPage"
+             Title="Browse Movies">
+
+    <VerticalStackLayout>
+        <!--Search and filter-->
+        <HorizontalStackLayout Padding="15" Spacing="10">
+            <Entry x:Name="SearchEntry" 
+                   Placeholder="Search movies..."
+                   WidthRequest="250"
+                   TextChanged="OnSearchTextChanged"/>
+
+            <Picker x:Name="GenrePicker"
+                    Title="Filter by Genre"
+                    WidthRequest="150"
+                    SelectedIndexChanged="OnGenreChanged"/>
+        </HorizontalStackLayout>
+
+        <!--Movie count label-->
+        <Label x:Name="MovieCountLabel"
+               Text="Loading movies..."
+               FontSize="14"
+               HorizontalOptions="Center"
+               Margin="0,0,0,10"/>
+
+        <!-- Movie list-->
+        <CollectionView x:Name="MovieCollectionView"
+                        SelectionMode="Single"
+                        SelectionChanged="OnMovieSelected">
+            <CollectionView.ItemTemplate>
+                <DataTemplate>
+                    <Border Padding="15" 
+                            Margin="10,5" 
+                            StrokeThickness="1"
+                            Stroke="LightGray"
+                            BackgroundColor="White">
+                        <Border.StrokeShape>
+                            <RoundRectangle CornerRadius="10"/>
+                        </Border.StrokeShape>
+
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+
+                            <!--Movie Emoji-->
+                            <Label Text="{Binding Emoji}" 
+                                   FontSize="30"
+                                   Grid.Column="0"
+                                   VerticalOptions="Center"/>
+
+                            <!--Movie Info-->
+                            <VerticalStackLayout Grid.Column="1" 
+                                                 Spacing="5"
+                                                 Padding="15,0">
+
+                                <Label Text="{Binding DisplayInfo}" 
+                                       FontSize="18"
+                                       FontAttributes="Bold"/>
+
+                                <Label Text="{Binding GenreDisplay}" 
+                                       FontSize="14"
+                                       TextColor="Gray"/>
+
+                                <Label Text="{Binding Director}" 
+                                       FontSize="12"
+                                       TextColor="DarkGray"/>
+                            </VerticalStackLayout>
+
+                            <!--Rating display-->
+                            <Label Text="{Binding RatingDisplay}" 
+                                   Grid.Column="2"
+                                   FontSize="14"
+                                   TextColor="Orange"
+                                   VerticalOptions="Center"/>
+                        </Grid>
+                    </Border>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
+
+    </VerticalStackLayout>
+
+</ContentPage>
