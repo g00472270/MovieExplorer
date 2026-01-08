@@ -7,51 +7,53 @@
     <ScrollView>
         <VerticalStackLayout Padding="20" Spacing="15">
 
-            <Label Text="Add New Movie"
+            <Label x:Name="TitleLabel"
+                   Text="Add New Movie"
                    FontSize="24"
                    FontAttributes="Bold"
                    HorizontalOptions="Center"
                    Margin="0,0,0,20"/>
 
             <!--Movie title input-->
-            <Label Text="Movie Title *" FontAttributes="Bold"/>
+            <Label x:Name="TitleLabelText" Text="Movie Title *" FontAttributes="Bold"/>
             <Entry x:Name="TitleEntry"
                    Placeholder="Enter movie title"/>
 
             <!--Year input-->
-            <Label Text="Year *" FontAttributes="Bold"/>
+            <Label x:Name="YearLabel" Text="Year *" FontAttributes="Bold"/>
             <Entry x:Name="YearEntry"
                    Placeholder="Enter year (e.g. 2024)"
                    Keyboard="Numeric"/>
 
             <!--Director input-->
-            <Label Text="Director" FontAttributes="Bold"/>
+            <Label x:Name="DirectorLabel" Text="Director" FontAttributes="Bold"/>
             <Entry x:Name="DirectorEntry"
                    Placeholder="Enter director name"/>
 
             <!--Rating input-->
-            <Label Text="Rating (0-10)" FontAttributes="Bold"/>
+            <Label x:Name="RatingLabel" Text="Rating (0-10)" FontAttributes="Bold"/>
             <Entry x:Name="RatingEntry"
                    Placeholder="Enter rating (e.g. 8.5)"
                    Keyboard="Numeric"/>
 
             <!--Emoji input-->
-            <Label Text="Emoji" FontAttributes="Bold"/>
+            <Label x:Name="EmojiLabel" Text="Emoji" FontAttributes="Bold"/>
             <Entry x:Name="EmojiEntry"
                    Placeholder="Enter emoji"
                    MaxLength="2"/>
 
             <!--Genres section-->
-            <Label Text="Genres" FontAttributes="Bold" Margin="0,10,0,0"/>
+            <Label x:Name="GenreLabel" Text="Genres" FontAttributes="Bold" Margin="0,10,0,0"/>
 
             <!--Add genre input and button-->
             <HorizontalStackLayout Spacing="10">
                 <Entry x:Name="NewGenreEntry"
                        Placeholder="Add genre..."
                        WidthRequest="200"/>
-                <Button Text="Add Genre"
+                <Button x:Name="AddGenreButton"
+                        Text="Add Genre"
                         Clicked="AddGenreClicked"
-                        BackgroundColor="#512BD4"
+                        BackgroundColor="Purple"
                         TextColor="White"/>
             </HorizontalStackLayout>
 
@@ -89,7 +91,8 @@
             </CollectionView>
 
             <!--Add movie button-->
-            <Button Text="Add Movie"
+            <Button x:Name="AddMovieButton"
+                    Text="Add Movie"
                     Clicked="AddMovieClicked"
                     BackgroundColor="Green"
                     TextColor="White"

@@ -14,6 +14,7 @@
             BindingContext = _viewModel;
 
             LoadMovies();
+            LoadTheme();
         }
 
         protected override void OnAppearing()
@@ -24,6 +25,8 @@
             {
                 _viewModel.UpdateFilteredMovies();
             }
+            //Reapply theme when returning to page
+            LoadTheme();
         }
 
         private async void LoadMovies()
@@ -143,6 +146,30 @@
                 //Clear the selection so can tap the same movie again
                 MovieCollectionView.SelectedItem = null;
             }
+        }
+
+        //Manual theme application for this page
+        private void LoadTheme()
+        {
+            bool isDarkTheme = Preferences.Get("IsDarkTheme", false);
+            ApplyTheme(isDarkTheme);
+        }
+
+        private void ApplyTheme(bool isDarkTheme)
+        {
+            //Apply theme to page background
+            this.BackgroundColor = isDarkTheme ? Colors.Black : Colors.White;
+
+            //Apply theme to movie count label
+            MovieCountLabel.TextColor = isDarkTheme ? Colors.White : Colors.Black;
+
+            //Apply theme to search entry - TEXT AND BACKGROUND
+            SearchEntry.TextColor = isDarkTheme ? Colors.White : Colors.Black;
+            SearchEntry.BackgroundColor = isDarkTheme ? Colors.DarkGray : Colors.LightGray;
+
+            //Apply theme to genre picker - TEXT AND BACKGROUND
+            GenrePicker.TextColor = isDarkTheme ? Colors.White : Colors.Black;
+            GenrePicker.BackgroundColor = isDarkTheme ? Colors.DarkGray : Colors.LightGray;
         }
     }
 }

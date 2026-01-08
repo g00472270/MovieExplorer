@@ -4,7 +4,6 @@ using System.Runtime.CompilerServices;
 
 namespace MovieExplorer
 {
-    //MovieViewModel implements MVVM pattern
     //INotifyPropertyChanged allows UI to update when properties change
     public class MovieViewModel : INotifyPropertyChanged
     {

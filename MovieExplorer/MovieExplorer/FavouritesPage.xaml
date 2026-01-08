@@ -6,7 +6,8 @@
 
     <VerticalStackLayout>
 
-        <Label Text="⭐ My Favourite Movies" 
+        <Label x:Name="TitleLabel"
+               Text="⭐ My Favourite Movies" 
                FontSize="24" 
                HorizontalOptions="Center"
                Margin="0,20"/>
@@ -43,7 +44,6 @@
                                                  Padding="15,0">
                                 <Label Text="{Binding DisplayInfo}" 
                                        FontSize="18"
-                                       TextColor="Black"
                                        FontAttributes="Bold"/>
 
                                 <Label Text="{Binding GenreDisplay}" 
@@ -51,7 +51,7 @@
                                        TextColor="Gray"/>
                             </VerticalStackLayout>
 
-                            <!--Remove button-->
+                            <!--Delete button-->
                             <Button Text="Delete" 
                                     Grid.Column="2"
                                     FontSize="14"
@@ -61,7 +61,6 @@
                                     TextColor="White"
                                     CornerRadius="5"
                                     Clicked="OnRemoveFavouriteClicked"/>
-                           
                         </Grid>
                     </Border>
                 </DataTemplate>

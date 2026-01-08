@@ -3,26 +3,27 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="MovieExplorer.MainPage"
              Title="Movie Explorer">
-
     <VerticalStackLayout Spacing="20" Padding="30">
-
-        <Label Text="Movie Explorer"
+        <Label x:Name="TitleLabel"
+               Text="Movie Explorer"
                FontSize="30"
                HorizontalOptions="Center"
                Margin="0,50"/>
-
-        <Button Text="Browse Movies"
+        
+        <Button x:Name="BrowseButton"
+                Text="Browse Movies"
                 Clicked="OnBrowseMoviesClicked"
                 HeightRequest="50"/>
-
-        <Button Text="My Favorites"
+        
+        <Button x:Name="FavouritesButton"
+                Text="My Favorites"
                 Clicked="OnFavoritesClicked"
                 HeightRequest="50"/>
-
-        <Button Text="Settings"
+        
+        <Button x:Name="SettingsButton"
+                Text="Settings"
                 Clicked="OnSettingsClicked"
                 HeightRequest="50"/>
-
+        
     </VerticalStackLayout>
-
 </ContentPage>
