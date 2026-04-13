@@ -38,14 +38,22 @@ namespace MovieExplorer
                 catch
                 {
                     //If file is corrupted, delete it
-                    File.Delete(_moviesFile);
+                    try
+                    {
+                        File.Delete(_moviesFile);
+                    }
+                    catch
+                    {
+                        // ignore delete failure
+                    }
                 }
             }
 
             //Try to download from internet
             try
             {
-                string url = "https://raw.githubusercontent.com/DonH-TTS/jsonfiles/refs/heads/main/moviesemoji.json";
+                // Correct raw.githubusercontent.com format: /{user}/{repo}/{branch}/{path}
+                string url = "https://raw.githubusercontent.com/DonH-ITS/jsonfiles/refs/heads/main/moviesemoji.json";
                 string json = await _client.GetStringAsync(url);
 
                 //Save to file
@@ -59,9 +67,20 @@ namespace MovieExplorer
                     return result;
                 }
             }
-            catch
+            catch (Exception ex)
             {
-                //Download failed - will use hardcoded movies below
+                //Log the error so you can inspect it in debug output
+                System.Diagnostics.Debug.WriteLine($"MovieService.GetMoviesAsync download failed: {ex}");
+                //Remove any possibly corrupted cache so next run can retry cleanly
+                try
+                {
+                    if (File.Exists(_moviesFile))
+                        File.Delete(_moviesFile);
+                }
+                catch
+                {
+                    //Ignore delete failure
+                }
             }
 
             //If download failed, show message and return hardcoded movies

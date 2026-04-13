@@ -9,7 +9,7 @@
             InitializeComponent();
 
             //Create new ViewModel with URL
-            _viewModel = new MovieViewModel("https://raw.githubusercontent.com/DonH-TTS/jsonfiles/refs/heads/main/moviesemoji.json");
+            _viewModel = new MovieViewModel("https://raw.githubusercontent.com/DonH-ITS/jsonfiles/refs/heads/main/moviesemoji.json");
             //Set BindingContext so XAML can bind to ViewModel properties
             BindingContext = _viewModel;
 

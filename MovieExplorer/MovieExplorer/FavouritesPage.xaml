@@ -40,15 +40,21 @@
 
                             <!--Movie info-->
                             <VerticalStackLayout Grid.Column="1" 
-                                                 Spacing="5"
-                                                 Padding="15,0">
+                                Spacing="5"
+                                Padding="15,0">
+
                                 <Label Text="{Binding DisplayInfo}" 
-                                       FontSize="18"
-                                       FontAttributes="Bold"/>
+                                   FontSize="18"
+                                   TextColor="Black"
+                                   FontAttributes="Bold"/>
 
                                 <Label Text="{Binding GenreDisplay}" 
-                                       FontSize="14"
-                                       TextColor="Gray"/>
+                                   FontSize="14"
+                                   TextColor="Gray"/>
+
+                                <Label Text="{Binding Director}" 
+                                   FontSize="12"
+                                   TextColor="DarkGray"/>
                             </VerticalStackLayout>
 
                             <!--Delete button-->
