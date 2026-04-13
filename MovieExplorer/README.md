@@ -1,6 +1,6 @@
 # MovieExplorer
 
-A simple .NET MAUI app that demonstrates downloading and displaying a list of movies, local caching, searching, filtering, and saving favourites. It targets .NET 9 and runs on supported MAUI platforms (Android, iOS, macOS, and Windows).
+A .NET MAUI app that demonstrates downloading and displaying a list of movies, local caching, searching, filtering, and saving favourites. It uses .NET 9 and runs on supported MAUI platforms (Android, iOS, macOS, and Windows).
 
 ## Features
 
@@ -42,7 +42,7 @@ If this resource is unavailable, the app shows a dialog and falls back to a buil
 - Browse the movie list on the main page.
 - Tap a movie to view its details.
 - Add to Favourites using the button on the detail page.
-- View saved movies on the Favourites page (shows total count).
+- View saved movies on the Favourites page.
 - Remove a movie from favourites using the Delete button.
 
 ## AI Acknowledgment
