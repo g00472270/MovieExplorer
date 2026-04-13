@@ -1,0 +1,84 @@
+# Visual Studio & Rider
+.vs/
+.vscode/
+.idea/
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+
+# Build outputs
+[Bb]in/
+[Oo]bj/
+**/bin/
+**/obj/
+artifacts/
+
+# NuGet
+*.nupkg
+packages/
+.nuget/
+project.assets.json
+project.lock.json
+
+# Rider caches
+.idea/
+*.sln.iml
+
+# MAUI / .NET artifacts
+*.dll
+*.pdb
+*.cache
+*.ilk
+*.log
+
+# Android / Gradle
+.gradle/
+local.properties
+*.keystore
+*.keystore.*
+*.apk
+*.ap_
+*.aab
+**/bin/**/lp/
+**/obj/**/lp/
+**/build/
+
+# iOS / Xcode
+xcuserdata/
+*.xcuserstate
+*.mode1v3
+*.pbxuser
+*.perspectivev3
+*.xcworkspace
+*.xcodeproj/project.xcworkspace/
+*.xcassets/*.xcassets
+*.ipa
+
+# macOS / Windows system files
+.DS_Store
+Thumbs.db
+
+# Temporary files
+*.tmp
+*.temp
+*.log
+
+# Package managers / tooling
+node_modules/
+npm-debug.log
+yarn-error.log
+
+# Secrets / credentials
+*.env
+*.secrets.json
+secret-*.json
+
+# OneDrive / sync issues (workspace is in OneDrive for this user)
+~$*
+~*.tmp
+
+# Misc
+.vagrant/
+*.bak
+*.orig
